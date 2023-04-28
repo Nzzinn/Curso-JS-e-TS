@@ -1,0 +1,1 @@
+console.log('To aprendendo JS rapaziada.');
