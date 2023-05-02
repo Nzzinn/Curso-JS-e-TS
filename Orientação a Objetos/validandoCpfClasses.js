@@ -9,41 +9,46 @@ class ValidaCPF{
     }
 
     eSequencia(){
-        return this.cpfLimpo.charAt(0).repeat(11) === this.cpfLimpo;
+        const sequencia = this.cpfLimpo[0].repeat(this.cpfLimpo.length);
+        return sequencia === this.cpfLimpo;
     }
 
     geraNovoCpf(){
         const cpfParcial = this.cpfLimpo.slice(0, -2);
-        const digito1 = ValidaCPF.geraDigito(cpfParcial);
-        const digito2 = ValidaCPF.geraDigito(cpfParcial + digito1);
+        const digito1 = ValidaCPF.digito(cpfParcial);
+        const digito2 = ValidaCPF.digito(cpfParcial + digito1);
         this.novoCPF = cpfParcial + digito1 + digito2;
     }
 
-    static geraDigito(cpfParcial){
-        let total = 0;
-        let reverso = cpfParcial.length + 1;
-
-        for(let num of cpfParcial){
-            total += reverso * Number(num);
-            reverso --;
-        }
+    digito(cpfParcial){
+        const array = Array.from(cpfParcial);
+        let regressivo = array.length + 1;
+        let total = array.reduce((acumulador, valor) => {
+            acumulador += (regressivo * Number(valor));
+            regressivo--;
+            return acumulador;
+        }, 0);
 
         const digito = 11 - (total % 11);
-        return digito <= 9 ? String(digito) : '0';
+        return digito > 9 ? '0': String(digito);
     }
 
     valida(){
-        if(!this.cpfLimpo) return false;
-        if(typeof cpfLimpo !== 'string') return false;
+        if(typeof this.cpfLimpo === 'undefined') return false;
         if(this.cpfLimpo.length !== 11) return false;
         if(this.eSequencia()) return false;
-        this.geraNovoCpf();
 
-        return this.novoCPF === this.cpfLimpo;
+        const cpfParcial = this.cpfLimpo.slice(0, -2);
+        const digito1 = this.digito(cpfParcial);
+        const digito2 = this.digito(cpfParcial + digito1);
+        
+        const novoCpf = cpfParcial + digito1 + digito2;
+
+        return novoCpf === this.cpfLimpo;
     }
 }
 
-const validacpf = new ValidaCPF('113.874.589-81');
+const validacpf = new ValidaCPF('000.000.000-00');
 
 if(validacpf.valida()){
     console.log('CPF Válido!');
